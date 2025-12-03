@@ -1,2 +1,2 @@
-# recipes-nutritional-analysis
+# Recipes Nutritional Analysis
 Analyzing the nutritional value of types of recipes. A final project for DSC 80, 2025.
