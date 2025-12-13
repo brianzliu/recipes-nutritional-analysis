@@ -99,8 +99,11 @@ We also tested dependency on `minutes`.
 
 ## Framing a Prediction Problem
 **Problem**: Predict the average rating of a recipe (`rating_avg`).
+
 **Type**: **Regression**.
+
 **Response Variable**: `rating_avg`. We chose this variable because we want to quantify user satisfaction on a continuous scale (1-5), and predicting the exact average allows for more granular recommendations.
+
 **Evaluation Metric**: **RMSE** (Root Mean Squared Error). We chose RMSE over $R^2$ because RMSE provides an error metric in the same units as the rating (stars), which is more interpretable for this context. We want to know, on average, how many stars off our prediction is.
 
 **Features Known at Prediction Time**: We only use features intrinsic to the recipe (steps, ingredients, nutrition, time) which are known *before* any users rate it. We do not use any user-interaction data (like number of reviews) as predictors.
