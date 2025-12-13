@@ -7,16 +7,17 @@ The dataset used in this project is the **Recipes and Ratings** dataset, which n
 
 **Research Question**: *What is the relationship between a recipe's complexity (steps, time, ingredients) and its nutritional value, and can these factors be used to accurately predict user satisfaction (average ratings)?*
 
-**Significance**: This analysis investigates the "return on investment" for home cooking. We explore whether "complex" recipes (more steps, longer time) are necessarily more calorie-dense or higher-rated than simple ones. By building a model to predict ratings from complexity and nutrition, and assessing its fairness across short and long recipes, we aim to understand what drives user satisfaction on food platforms.
+**Significance**: This analysis investigates the "return on investment" for home cooking. We explore whether "complex" recipes (more steps, longer time) are necessarily more calorie-dense or higher-rated than simple ones. By building a model to predict ratings from complexity and nutrition, and assessing its fairness across short and long recipes, we aim to understand what affects user satisfaction for recipes.
 
 **Relevant Columns**:
-- `n_steps`: The number of steps required to make the recipe. (Proxy for complexity).
+- `n_steps`: The number of steps required to make the recipe (i.e. how complex a given recipe is).
 - `minutes`: The time it takes to prepare the recipe.
-- `rating_avg`: The average rating (1-5 stars) given by users.
-- `nutrition`: A list of nutritional values (calories, fat, sugar, etc.).
-- `calories`: The number of calories per serving (extracted from `nutrition`).
-- `sugar`: The sugar content (PDV) (extracted from `nutrition`).
-- `protein`: The protein content (PDV) (extracted from `nutrition`).
+- `rating_avg`: The average rating (1-5 stars) given by users for a given recipe.
+- `nutrition`: A list of nutritional values (calories, fat, sugar, etc.), out of which calories, total fat, sugar, and protein columns were extracted.
+- `calories (#)`: The number of calories per serving (extracted from `nutrition`).
+- `sugar (PDV)`: The sugar content (PDV) (extracted from `nutrition`).
+- `total fat (PDV)`: The total fat content (PDV) (extracted from `nutrition`).
+- `protein (PDV)`: The protein content (PDV) (extracted from `nutrition`).
 
 ## Data Cleaning and Exploratory Data Analysis
 ### Data Cleaning
@@ -114,9 +115,13 @@ We also tested dependency on `minutes`.
 - **Conclusion**: Since the p-value is below 0.05, we **reject the null hypothesis**. The data suggests that more complex recipes indeed tend to be more calorie-dense.
 
 ## Framing a Prediction Problem
+
 **Problem**: Predict the average rating of a recipe (`rating_avg`).
+
 **Type**: **Regression**.
+
 **Response Variable**: `rating_avg`. We chose this variable because we want to quantify user satisfaction on a continuous scale (1-5), and predicting the exact average allows for more granular recommendations.
+
 **Evaluation Metric**: **RMSE** (Root Mean Squared Error). We chose RMSE over $R^2$ because RMSE provides an error metric in the same units as the rating (stars), which is more interpretable for this context. We want to know, on average, how many stars off our prediction is.
 
 **Features Known at Prediction Time**: We only use features intrinsic to the recipe (steps, ingredients, nutrition, time) which are known *before* any users rate it. We do not use any user-interaction data (like number of reviews) as predictors.
@@ -136,12 +141,13 @@ We also tested dependency on `minutes`.
 
 ## Final Model
 **Model**: Random Forest Regressor.
+
 **Features Added**:
 - `minutes` (Quantitative): Recipes taking longer might be rated differently (e.g. "Sunday roasts" vs "quick snacks"). We applied a `QuantileTransformer` to handle the heavy right skew of time data.
 - `n_ingredients` (Quantitative): Another proxy for complexity. Standardized.
 - `nutrition` features (fat, sugar, protein) (Quantitative): To capture the "health" aspect. Standardized.
 
-**Algorithm Choice**: We chose a **Random Forest** because it can capture non-linear relationships and interactions between features (e.g., highly complex recipes might only be rated highly if they are also high in fat/sugar).
+**Algorithm Choice**: A **Random Forest** model was chosen because it can capture non-linear relationships and interactions between features (e.g., highly complex recipes might only be rated highly if they are also high in fat/sugar).
 
 **Hyperparameter Tuning**: We used `GridSearchCV` with 3-fold cross-validation. We tuned:
 - `n_estimators`: [50, 100]
