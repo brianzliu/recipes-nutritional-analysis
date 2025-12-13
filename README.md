@@ -49,19 +49,6 @@ To prepare the data for analysis, we performed the following cleaning steps:
 *Description: The relationship between saturated fat and rating is not very strong, but there is a slight trend where recipes with moderate saturated fat are rated highly. Extremely high fat content doesn't necessarily guarantee a better rating.*
 
 ### Interesting Aggregates
-#### Overall Average Rating and Recipe Count, Grouped By Number of Steps in Recipe
-
-| n_steps | rating_avg | count |
-|--------:|-----------:|------:|
-|      39 |    4.93333 |    15 |
-|      33 |    4.92308 |    41 |
-|      40 |    4.89583 |    16 |
-|      28 |    4.88991 |   157 |
-|      50 |    4.84615 |    13 |
-
-<iframe src="assets/interesting_aggregates_1.html" width="800" height="600" frameborder="0"></iframe>
-*Description: This plot shows average ratings for recipes with different step counts. While very specific high-step counts have high averages (likely due to small sample sizes), the general trend is relatively flat.*
-
 #### Average Recipe Calories, Sugar, and Total Fat per Recipe Complexity (Based on # of Steps)
 This table reveals a clear trend: as recipe complexity increases (more steps), the nutritional content (calories, sugar, and fat) also increases. "Very High" complexity recipes have nearly double the calories of "Low" complexity ones. This suggests that more effort in the kitchen often correlates with richer, heavier meals (like elaborate desserts or main courses), whereas simpler recipes might be lighter snacks or quick meals.
 
