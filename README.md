@@ -60,9 +60,13 @@ The `rating` column might be **NMAR** (Not Missing At Random). Users are often l
 
 ### Missingness Dependency
 We tested if the missingness of `rating` depends on the **number of steps** (`n_steps`).
+
 - **Null Hypothesis**: The distribution of `n_steps` is the same when `rating` is missing vs. not missing.
+
 - **Alternative Hypothesis**: The distribution of `n_steps` is different when `rating` is missing vs. not missing.
+
 - **Test Statistic**: The absolute difference in means of `n_steps`.
+
 - **Significance Level**: 0.05.
 
 <iframe src="assets/missingness_nsteps.html" width="800" height="600" frameborder="0"></iframe>
@@ -82,6 +86,7 @@ We also tested dependency on `minutes`.
 **Alternative Hypothesis**: Recipes with high complexity (10+ steps) have a **higher** average caloric content than low complexity recipes. (One-sided).
 
 **Test Statistic**: Difference in means (Mean Calories of High Complexity - Mean Calories of Low Complexity).
+
 **Significance Level**: 0.05.
 
 **Justification**: We chose difference in means because `calories` is a quantitative variable and we are comparing two groups. A permutation test is appropriate here as we are making no assumptions about the underlying distribution of calories.
@@ -118,7 +123,8 @@ We also tested dependency on `minutes`.
 
 ## Final Model
 **Model**: Random Forest Regressor.
-**Features Added**:
+
+**Features**:
 - `minutes` (Quantitative): Recipes taking longer might be rated differently (e.g. "Sunday roasts" vs "quick snacks"). We applied a `QuantileTransformer` to handle the heavy right skew of time data.
 - `n_ingredients` (Quantitative): Another proxy for complexity. Standardized.
 - `nutrition` features (fat, sugar, protein) (Quantitative): To capture the "health" aspect. Standardized.
