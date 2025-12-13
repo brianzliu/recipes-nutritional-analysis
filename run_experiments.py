@@ -280,20 +280,18 @@ print(f"Baseline Train RMSE: {rmse_train}")
 print(f"Baseline Test RMSE: {rmse_test}")
 
 # Final Model
-features = ['n_steps', 'calories (#)', 'minutes', 'n_ingredients', 'total fat (PDV)', 'sugar (PDV)', 'protein (PDV)']
-# Ensure n_ingredients exists? In the user snippet: `features = [...]`
-# But where is 'n_ingredients' created?
-# User code: `X_final = ri_custom_valid_rating[features]`
-# I need to verify 'n_ingredients' is in `ri_custom`.
-# The user snippet for `ri_custom` creation does NOT calculate n_ingredients explicitly.
-# The user's `recipes` dataframe from `pd.read_csv("RAW_recipes.csv")` usually has `n_ingredients`.
-# Let's hope it's there. If `pd.read_csv` reads it, it's fine.
-# In `RAW_recipes.csv` description, `n_ingredients` is often present. 
-# If not, I'll print available columns and fail/warn.
+# Feature Engineering: Create transformed columns
+# 1. Calories per Minute: "Energy Density over Time". High calories quickly = fast food/unhealthy? 
+#    We add 1 to minutes to avoid division by zero.
+ri_custom_valid_rating['calories_per_minute'] = ri_custom_valid_rating['calories (#)'] / (ri_custom_valid_rating['minutes'] + 1)
+
+# 2. Complexity Density: "Steps per Minute". High steps in short time = intense/busy recipe?
+ri_custom_valid_rating['complexity_density'] = ri_custom_valid_rating['n_steps'] / (ri_custom_valid_rating['minutes'] + 1)
+
+features = ['n_steps', 'calories (#)', 'minutes', 'n_ingredients', 'total fat (PDV)', 'sugar (PDV)', 'protein (PDV)', 'calories_per_minute', 'complexity_density']
 
 if 'n_ingredients' not in ri_custom_valid_rating.columns:
     print("Warning: 'n_ingredients' not found. Creating it from nutrition or skipping?")
-    # We merged `recipes` into `recipes_interactions`. `recipes` has it.
     pass
 
 X_final = ri_custom_valid_rating[features]
@@ -303,8 +301,8 @@ X_train_final, X_test_final, y_train_final, y_test_final = train_test_split(X_fi
 
 final_pre = ColumnTransformer(
     transformers=[
-        ('quantile', QuantileTransformer(output_distribution='normal'), ['minutes', 'calories (#)']),
-        ('scaling', StandardScaler(), ['n_steps', 'n_ingredients', 'total fat (PDV)', 'sugar (PDV)', 'protein (PDV)'])
+        ('quantile', QuantileTransformer(output_distribution='normal'), ['minutes', 'calories (#)', 'calories_per_minute']),
+        ('scaling', StandardScaler(), ['n_steps', 'n_ingredients', 'total fat (PDV)', 'sugar (PDV)', 'protein (PDV)', 'complexity_density'])
     ],
     remainder='drop'
 )
