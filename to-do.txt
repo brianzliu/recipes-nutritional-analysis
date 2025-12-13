@@ -1,4 +1,0 @@
-- add explanation for Average Recipe Calories, Sugar, and Total Fat per Recipe Complexity (Based on # of Steps) (interesting aggregates)
-- fix head 5 first rows of cleaned dataset
-- talk about why you believe these features improved your model's performance from the perspective of the data generating process. (final model)
-- In your notebook, state which hyperparameters you plan to tune and why before actually tuning them.
