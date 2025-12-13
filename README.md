@@ -55,6 +55,7 @@ Here are the first 5 rows of the cleaned dataset (selected columns):
 
 ### Interesting Aggregates
 #### Overall Average Rating and Recipe Count, Grouped By Number of Steps in Recipe
+
 |   n_steps |   rating_avg |   count |
 |----------:|-------------:|--------:|
 |        39 |      4.93333 |      15 |
@@ -66,6 +67,7 @@ Here are the first 5 rows of the cleaned dataset (selected columns):
 *Description: This plot shows average ratings for recipes with different step counts. While very specific high-step counts have high averages (likely due to small sample sizes), the general trend is relatively flat.*
 
 #### Average Recipe Calories, Sugar, and Total Fat per Recipe Complexity (Based on # of Steps)
+
 | complexity_level (n_steps)  |   calories (#) |   sugar (PDV) |   total fat (PDV) |
 |:-------------------|---------------:|--------------:|------------------:|
 | Low (1-5)          |        315.745 |       59.7003 |           23.3981 |
