@@ -161,8 +161,11 @@ We also tested dependency on `minutes`.
 
 ## Fairness Analysis
 **Question**: Does the model perform differently for **Short recipes** (< 30 min) vs. **Long recipes** (>= 30 min)?
+
 **Group X**: Short recipes (`minutes` < 30).
+
 **Group Y**: Long recipes (`minutes` >= 30).
+
 **Evaluation Metric**: **RMSE**.
 
 **Hypotheses**:
