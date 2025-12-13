@@ -5,9 +5,9 @@
 ## Introduction
 The dataset used in this project is the **Recipes and Ratings** dataset, which nominally contains 83,782 recipes and 731,927 interactions (reviews and ratings) from Food.com. This project focuses on understanding how recipe complexity relates to nutritional value and user ratings.
 
-**Research Question**: *How does the complexity of the recipe (measured by the number of steps) affect its caloric content and average user rating?*
+**Research Question**: *What is the relationship between a recipe's complexity (steps, time, ingredients) and its nutritional value, and can these factors be used to accurately predict user satisfaction (average ratings)?*
 
-**Significance**: This question explores the trade-off between effort and reward in cooking. Are complicated recipes "healthier" or "tastier"? Understanding this relationship can help home cooks decide if the extra effort is worth it and help recipe platforms recommend recipes that balance effort and nutrition.
+**Significance**: This analysis investigates the "return on investment" for home cooking. We explore whether "complex" recipes (more steps, longer time) are necessarily more calorie-dense or higher-rated than simple ones. By building a model to predict ratings from complexity and nutrition, and assessing its fairness across short and long recipes, we aim to understand what drives user satisfaction on food platforms.
 
 **Relevant Columns**:
 - `n_steps`: The number of steps required to make the recipe. (Proxy for complexity).
@@ -56,13 +56,14 @@ Here are the first 5 rows of the cleaned dataset (selected columns):
 ### Interesting Aggregates
 #### Overall Average Rating and Recipe Count, Grouped By Number of Steps in Recipe
 
-|   n_steps |   rating_avg |   count |
-|----------:|-------------:|--------:|
-|        39 |      4.93333 |      15 |
-|        33 |      4.92308 |      41 |
-|        40 |      4.89583 |      16 |
-|        28 |      4.88991 |     157 |
-|        50 |      4.84615 |      13 |
+| n_steps | rating_avg | count |
+|--------:|-----------:|------:|
+|      39 |    4.93333 |    15 |
+|      33 |    4.92308 |    41 |
+|      40 |    4.89583 |    16 |
+|      28 |    4.88991 |   157 |
+|      50 |    4.84615 |    13 |
+
 <iframe src="assets/interesting_aggregates_1.html" width="800" height="600" frameborder="0"></iframe>
 *Description: This plot shows average ratings for recipes with different step counts. While very specific high-step counts have high averages (likely due to small sample sizes), the general trend is relatively flat.*
 
