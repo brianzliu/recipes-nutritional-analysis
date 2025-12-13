@@ -137,7 +137,7 @@ We also tested dependency on `minutes`.
 - **Final Train RMSE**: 0.4180
 - **Final Test RMSE**: 0.4555
 - **Improvement**: The Final Model reduced the RMSE by approximately **0.0418 stars** compared to the Baseline.
-- **Why it Improved (Data Generating Process)**: The baseline model essentially assumed that "more steps" or "more calories" directly and linearly lead to a specific rating. However, user satisfaction might be more accurately reflected in the **effort-to-reward ratio**. A user who spends 2 hours cooking a complex meal expects a gourmet result; if it's merely "okay", they might rate it harshly. Conversely, a user making a 5-minute snack sets the bar lower for complexity but higher for instant gratification.
+- The baseline model essentially assumed that "more steps" or "more calories" directly and linearly lead to a specific rating. However, user satisfaction might be more accurately reflected in the **effort-to-reward ratio**. A user who spends 2 hours cooking a complex meal expects a gourmet result; if it's merely "okay", they might rate it harshly. Conversely, a user making a 5-minute snack sets the bar lower for complexity but higher for instant gratification.
   
   The engineered features capture this dynamic:
   1.  **`complexity_density` (`n_steps` / `minutes`)** represents the "stressfulness" of the cooking process. A recipe with 20 steps in 10 minutes is likely frantic and difficult to follow, leading to user frustration and lower ratings regardless of the taste. A recipe with 20 steps over 2 hours is a paced, "labor of love" project. By providing this ratio, the model can distinguish between "bad complexity" (confusion) and "good complexity" (craft).
