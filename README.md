@@ -29,8 +29,7 @@ To prepare the data for analysis, we performed the following cleaning steps:
 4.  The `nutrition` column contained string representations of lists (e.g., `"[51.5, 0.0, ...]" `). We parsed these strings into actual lists and expanded them into separate columns: `calories`, `total fat`, `sugar`, `sodium`, `protein`, `saturated fat`, and `carbohydrates`. This allows us to analyze specific nutritional components directly.
 
 **Cleaned Data Head**:
-![Cleaned Data Head](assets/ri_custom_head.png)
-
+<img src="assets/ri_custom_head.png" alt="Cleaned Data Head" width="900">
 
 ### Univariate Analysis
 <iframe src="assets/univariate_1.html" width="800" height="600" frameborder="0"></iframe>
