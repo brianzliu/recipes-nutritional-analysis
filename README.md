@@ -79,76 +79,91 @@ Here are the first 5 rows of the cleaned dataset (selected columns):
 
 ## Assessment of Missingness
 ### NMAR Analysis
-We suspect that the `rating` column might be NMAR (Not Missing At Random). People are often less likely to leave a rating when they feel indifferent about the recipe. If they loved it or hated it, they are more likely to rate it. However, if the missingness depends on the *unobserved* rating itself (e.g. low ratings are missing), it is NMAR. Additional data, such as "user engagement time" or "did they cook it", could help explain missingness and potentially make it MAR.
+We suspect that the `rating` column might be **NMAR** (Not Missing At Random). Users are often less likely to leave a rating when they feel indifferent about the recipe; they are motivated to rate only if they have a strong positive or negative experience. However, because this "indifference" is the unobserved value itself (or related to the unobserved rating), the missingness is NMAR. If we could collect additional data such as "user engagement time" or "did they verify cooking it", we might be able to explain the missingness, potentially making it MAR (Missing At Random) conditioned on those new columns.
 
 ### Missingness Dependency
-We tested if the missingness of `rating` depends on the number of steps (`n_steps`).
+We tested if the missingness of `rating` depends on the **number of steps** (`n_steps`).
+- **Null Hypothesis**: The distribution of `n_steps` is the same when `rating` is missing vs. not missing.
+- **Alternative Hypothesis**: The distribution of `n_steps` is different when `rating` is missing vs. not missing.
+- **Test Statistic**: The absolute difference in means of `n_steps`.
+- **Significance Level**: 0.05.
 
 <iframe src="assets/missingness_nsteps.html" width="800" height="600" frameborder="0"></iframe>
 
 **Results**:
-- **Observed Statistic**: 1.339
-- **P-value**: 0.0
-- **Conclusion**: The p-value is < 0.05, so we reject the null hypothesis. The missingness of ratings **depends** on the number of steps in the recipe.
+- **Observed Statistic**: 1.34
+- **P-value**: **< 0.001**
+- **Conclusion**: Since the p-value is less than the significance level of 0.05, we **reject the null hypothesis**. There is strong evidence that the missingness of ratings depends on the `n_steps` column.
 
 We also tested dependency on `minutes`.
-- **Observed Statistic**: 51.45
-- **P-value**: 0.138
-- **Conclusion**: The p-value > 0.05, so we fail to reject the null hypothesis. We do not have evidence that rating missingness depends on the preparation time (`minutes`).
+- **P-value**: 0.108
+- **Conclusion**: The p-value > 0.05, so we **fail to reject the null hypothesis**. We do not have sufficient evidence to say rating missingness depends on recipe preparation time.
 
 ## Hypothesis Testing
-**Null Hypothesis**: Recipes with 10+ steps and recipes with <10 steps have the same average calories.
-**Alternative Hypothesis**: Recipes with 10+ steps have higher average calories.
-**Test Statistic**: Difference in means (High Steps - Low Steps).
+**Null Hypothesis**: Recipes with high complexity (10+ steps) and low complexity (<10 steps) have the same average caloric content.
+**Alternative Hypothesis**: Recipes with high complexity (10+ steps) have a **higher** average caloric content than low complexity recipes. (One-sided).
+
+**Test Statistic**: Difference in means (Mean Calories of High Complexity - Mean Calories of Low Complexity).
+**Significance Level**: 0.05.
+
+**Justification**: We chose difference in means because `calories` is a quantitative variable and we are comparing two groups. A permutation test is appropriate here as we are making no assumptions about the underlying distribution of calories.
 
 **Results**:
 - **Observed Difference**: 128.1 calories
-- **P-value**: 0.0
-- **Conclusion**: Since the p-value is 0.0 (less than 0.05), we reject the null hypothesis. There is strong evidence that more complex recipes (10+ steps) have higher average calories than simpler recipes.
+- **P-value**: **< 0.001**
+- **Conclusion**: Since the p-value is below 0.05, we **reject the null hypothesis**. The data suggests that more complex recipes indeed tend to be more calorie-dense.
 
 ## Framing a Prediction Problem
 **Problem**: Predict the average rating of a recipe (`rating_avg`).
-**Type**: Regression.
-**Metric**: RMSE (Root Mean Squared Error).
+**Type**: **Regression**.
+**Response Variable**: `rating_avg`. We chose this variable because we want to quantify user satisfaction on a continuous scale (1-5), and predicting the exact average allows for more granular recommendations.
+**Evaluation Metric**: **RMSE** (Root Mean Squared Error). We chose RMSE over $R^2$ because RMSE provides an error metric in the same units as the rating (stars), which is more interpretable for this context. We want to know, on average, how many stars off our prediction is.
 
-We want to predict how well-rated a recipe will be based on its complexity and nutritional content. We use RMSE because it penalizes large errors and is in the same units as the rating (stars).
+**Features Known at Prediction Time**: We only use features intrinsic to the recipe (steps, ingredients, nutrition, time) which are known *before* any users rate it. We do not use any user-interaction data (like number of reviews) as predictors.
 
 ## Baseline Model
-**Model**: Linear Regression
+**Model**: Linear Regression.
 **Features**:
-- `n_steps` (Quantitative)
-- `calories (#)` (Quantitative)
-**Preprocessing**: Standard Scaling.
+- `n_steps` (Quantitative): Used as is (standardized).
+- `calories` (Quantitative): Used as is (standardized).
+
+**Preprocessing**: We used a `StandardScaler` for both quantitative features to ensure they are on the same scale, which is standard practice for linear regression (though strictly not required for prediction performance, it helps with interpretation of coefficients). There were no categorical features in the baseline model.
 
 **Performance**:
 - **Train RMSE**: 0.4975
 - **Test RMSE**: 0.4973
+- **Assessment**: The model performs adequately but simply assumes a linear relationship between complexity/calories and rating, which may be too simple. The RMSE of ~0.5 means we are off by half a star on average.
 
 ## Final Model
-**Model**: Random Forest Regressor
+**Model**: Random Forest Regressor.
 **Features Added**:
-- `minutes` (Quantile Transformed)
-- `n_ingredients` (Standard Scaled)
-- `total fat (PDV)` (Standard Scaled)
-- `sugar (PDV)` (Standard Scaled)
-- `protein (PDV)` (Standard Scaled)
+- `minutes` (Quantitative): Recipes taking longer might be rated differently (e.g. "Sunday roasts" vs "quick snacks"). We applied a `QuantileTransformer` to handle the heavy right skew of time data.
+- `n_ingredients` (Quantitative): Another proxy for complexity. Standardized.
+- `nutrition` features (fat, sugar, protein) (Quantitative): To capture the "health" aspect. Standardized.
 
-**Hyperparameter Tuning**: Tuned `n_estimators`, `max_depth`, and `min_samples_split` using GridSearchCV.
+**Algorithm Choice**: We chose a **Random Forest** because it can capture non-linear relationships and interactions between features (e.g., highly complex recipes might only be rated highly if they are also high in fat/sugar).
+
+**Hyperparameter Tuning**: We used `GridSearchCV` with 3-fold cross-validation. We tuned:
+- `n_estimators`: [50, 100]
+- `max_depth`: [5, 10, 15]
+- `min_samples_split`: [2, 5]
 
 **Performance**:
-- **Best Hyperparameters**: `max_depth=15`, `min_samples_split=2`, `n_estimators=100`
-- **Final Test RMSE**: 0.4543
-- **Improvement**: Reduced RMSE by approx 0.043 compared to baseline.
+- **Best Hyperparameters**: `max_depth=15`, `min_samples_split=2`, `n_estimators=100`.
+- **Final Test RMSE**: 0.4542
+- **Improvement**: The Final Model reduced the RMSE by approximately **0.043 stars** compared to the Baseline. This improvement confirms that adding nutritional context and recipe duration, along with a non-linear model, better explains user variation in ratings.
 
 ## Fairness Analysis
-**Question**: Does the model perform differently for Short recipes (< 30 min) vs. Long recipes (>= 30 min)?
-**Group X**: Short recipes
-**Group Y**: Long recipes
-**Metric**: RMSE
+**Question**: Does the model perform differently for **Short recipes** (< 30 min) vs. **Long recipes** (>= 30 min)?
+**Group X**: Short recipes (`minutes` < 30).
+**Group Y**: Long recipes (`minutes` >= 30).
+**Evaluation Metric**: **RMSE**.
 
 **Hypotheses**:
-- **Null**: Model RMSE is roughly the same for both groups.
-- **Alternative**: Model RMSE differs significantly.
+- **Null Hypothesis**: The model's RMSE is the same for both Short and Long recipes. (Any difference is due to chance).
+- **Alternative Hypothesis**: The model's RMSE is different for Short and Long recipes. (Two-sided).
+- **Significance Level**: 0.05.
+- **Test Statistic**: Absolute Difference in RMSE.
 
 <iframe src="assets/fairness_plot.html" width="800" height="600" frameborder="0"></iframe>
 
@@ -156,5 +171,5 @@ We want to predict how well-rated a recipe will be based on its complexity and n
 - **RMSE (Short)**: 0.4202
 - **RMSE (Long)**: 0.4738
 - **Observed Absolute Difference**: 0.0536
-- **P-value**: 0.0
-- **Conclusion**: The p-value is 0.0, so we reject the null hypothesis. The model appears to be unfair, with significantly higher error (RMSE) for long recipes compared to short recipes.
+- **P-value**: **< 0.001**
+- **Conclusion**: Since the p-value < 0.05, we **reject the null hypothesis**. The model is **unfair** with respect to recipe duration; it is significantly more accurate (lower RMSE) for short recipes than for long recipes. This might be because short recipes are simpler to rate or generally have less variance in quality.

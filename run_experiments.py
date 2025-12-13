@@ -93,28 +93,33 @@ print("SECTION: Univariate Analysis")
 if HAS_PLOTLY:
     # 1. Rating Avg
     fig1 = px.histogram(ri_custom, 'rating_avg', nbins=20, title="Distribution of Recipes' Average Rating")
+    fig1.update_layout(bargap=0.1)
     save_plot(fig1, 'univariate_1.html')
 
-    # 2. N Steps
-    fig2 = px.histogram(ri_custom, 'n_steps', title="Distribution of Recipes' # of Steps")
+    # 2. N Steps - Log Scale for better visibility of tail
+    fig2 = px.histogram(ri_custom, 'n_steps', title="Distribution of Recipes' # of Steps (Log Scale)")
+    fig2.update_layout(xaxis_type="log", bargap=0.1)
     save_plot(fig2, 'univariate_2.html')
 
 # --- Bivariate Analysis ---
 print("SECTION: Bivariate Analysis")
 
 if HAS_PLOTLY:
-    # 1. N Steps vs Calories
-    # Sampling for scatter plot performance if needed, but user uses full ri_custom in their cell logic, 
-    # though they have a .head(50000) at the end. I'll use full or sample if it's too big.
-    # 234k rows is okay for html but might be sluggish. I'll use the full df as requested.
-    fig3 = px.scatter(ri_custom, x='n_steps', y='calories (#)', title='Distribution of Calories (#) for each n_steps')
-    fig3.add_vline(ri_custom['n_steps'].median(), annotation_text='median number of steps', line_color='red', line_dash='dash')
+    # 1. N Steps vs Calories - Log Y for Calories due to outliers
+    # Filter out 0 calories for log scale if necessary, though plotly handles it gracefully usually.
+    fig3 = px.scatter(ri_custom, x='n_steps', y='calories (#)', title='Calories vs. Number of Steps (Log Scale for Calories)')
+    fig3.update_layout(yaxis_type="log")
+    # Add trendline on the log data? OLS on log data is better visualised if we transformed data first, 
+    # but for simple scatter, log axis is enough.
     save_plot(fig3, 'bivariate_1.html')
 
-    # 2. Saturated Fat vs Rating Avg
-    fig4 = px.scatter(ri_custom, x='saturated fat (PDV)', y='rating_avg', title='Distribution of Average Ratings per PDV Saturated Fat')
-    fig4.add_vline(ri_custom['saturated fat (PDV)'].median(), annotation_text='median saturated fat (PDV)', line_color='red', line_dash='dash')
-    fig4.add_hline(ri_custom['rating_avg'].median(), annotation_text='median average rating', line_color='red', line_dash='dash')
+    # 2. Saturated Fat vs Rating Avg - Cap Saturated Fat outliers for plot
+    # Cap at 99th percentile for visualization to see the bulk of data
+    cap_val = ri_custom['saturated fat (PDV)'].quantile(0.99)
+    ri_plot_subset = ri_custom[ri_custom['saturated fat (PDV)'] <= cap_val]
+    
+    fig4 = px.scatter(ri_plot_subset, x='saturated fat (PDV)', y='rating_avg', title='Average Rating vs. Saturated Fat (PDV) (Capped at 99th Percentile)')
+    fig4.update_traces(marker=dict(opacity=0.3)) # Reduce opacity to see density
     save_plot(fig4, 'bivariate_2.html')
 
 # --- Interesting Aggregates ---
