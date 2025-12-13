@@ -40,6 +40,8 @@ To prepare the data for analysis, we performed the following cleaning steps:
 ### Univariate Analysis
 <iframe src="assets/univariate_1.html" width="800" height="600" frameborder="0"></iframe>
 *Description: The distribution of average ratings is left-skewed, with most recipes receiving high ratings (4-5 stars).*
+
+### Bivariate Analysis
 <iframe src="assets/bivariate_1.html" width="800" height="600" frameborder="0"></iframe>
 *Description: There is a positive correlation between the number of steps and calories. More complex recipes tend to have more calories, although there is significant variance.*
 
