@@ -122,8 +122,8 @@ We also tested dependency on `minutes`.
 - `minutes` (Quantitative): Recipes taking longer might be rated differently (e.g. "Sunday roasts" vs "quick snacks"). We applied a `QuantileTransformer` to handle the heavy right skew of time data.
 - `n_ingredients` (Quantitative): Another proxy for complexity. Standardized.
 - `nutrition` features (fat, sugar, protein) (Quantitative): To capture the "health" aspect. Standardized.
-- `calories_per_minute`(Transformed): Calculated as `calories / (minutes + 1)`. This represents "energy density over time". It helps differentiate between high-calorie meals that take hours to cook (like a slow-roasted pork shoulder) versus high-calorie snacks that are quick (like a milkshake).
-- `complexity_density` (Transformed): Calculated as `n_steps / (minutes + 1)`. This represents "steps per minute". A high value indicates a very busy, intense cooking process (lots of steps in short time), whereas a low value might indicate a "set it and forget it" recipe (few steps over long time).
+- `calories_per_minute`(Transformed Quantitative): Calculated as `calories / (minutes + 1)`. This represents "energy density over time". It helps differentiate between high-calorie meals that take hours to cook (like a slow-roasted pork shoulder) versus high-calorie snacks that are quick (like a milkshake).
+- `complexity_density` (Transformed Quantitative): Calculated as `n_steps / (minutes + 1)`. This represents "steps per minute". A high value indicates a very busy, intense cooking process (lots of steps in short time), whereas a low value might indicate a "set it and forget it" recipe (few steps over long time).
 
 **Algorithm Choice**: A **Random Forest** model was chosen because it can capture non-linear relationships and interactions between features (e.g., highly complex recipes might only be rated highly if they are also high in fat/sugar).
 
@@ -139,7 +139,7 @@ We also tested dependency on `minutes`.
 - **Improvement**: The Final Model reduced the RMSE by approximately **0.0418 stars** compared to the Baseline.
 - **Why it Improved (Data Generating Process)**: The baseline model essentially assumed that "more steps" or "more calories" directly and linearly lead to a specific rating. However, user satisfaction might be more accurately reflected in the **effort-to-reward ratio**. A user who spends 2 hours cooking a complex meal expects a gourmet result; if it's merely "okay", they might rate it harshly. Conversely, a user making a 5-minute snack sets the bar lower for complexity but higher for instant gratification.
   
-  Our engineered features capture this dynamic:
+  The engineered features capture this dynamic:
   1.  **`complexity_density` (`n_steps` / `minutes`)** represents the "stressfulness" of the cooking process. A recipe with 20 steps in 10 minutes is likely frantic and difficult to follow, leading to user frustration and lower ratings regardless of the taste. A recipe with 20 steps over 2 hours is a paced, "labor of love" project. By providing this ratio, the model can distinguish between "bad complexity" (confusion) and "good complexity" (craft).
   2.  **`calories_per_minute`** proxies "indulgence efficiency". Users often rate "guilty pleasures" (high-calorie, quick treats like cookies or milkshakes) very highly because the reward (taste/sugar) comes immediately with little effort. A high value here signals this specific category of "high-reward, low-effort" food that tends to generate enthusiastic 5-star ratings, a pattern the linear baseline missed completely.
 
