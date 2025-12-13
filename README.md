@@ -104,6 +104,7 @@ We also tested dependency on `minutes`.
 
 ## Baseline Model
 **Model**: Linear Regression.
+
 **Features**:
 - `n_steps` (Quantitative): Used as is (standardized).
 - `calories` (Quantitative): Used as is (standardized).
