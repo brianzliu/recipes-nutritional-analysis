@@ -1,0 +1,7 @@
+RAW_recipes.csv
+RAW_interactions.csv
+ri_custom.csv
+Gemfile
+.bundle/
+Gemfile.lock
+vendor/
