@@ -3,22 +3,40 @@
 **Name**: Brian Liu
 
 ## Introduction
-The dataset used in this project is the **Recipes and Ratings** dataset, which contains information about recipes (minutes to prepare, number of steps, nutrition, etc.) and their user ratings.
+The dataset used in this project is the **Recipes and Ratings** dataset, which nominally contains 83,782 recipes and 731,927 interactions (reviews and ratings) from Food.com. This project focuses on understanding how recipe complexity relates to nutritional value and user ratings.
 
-**Research Question**: How does the complexity of the recipe (i.e. # of steps) affect the nutritional value and recipe rating?
+**Research Question**: *How does the complexity of the recipe (measured by the number of steps) affect its caloric content and average user rating?*
 
-This question is significant because it explores the trade-off between effort (complexity) and reward (nutrition/taste). Are complicated recipes worth the effort?
+**Significance**: This question explores the trade-off between effort and reward in cooking. Are complicated recipes "healthier" or "tastier"? Understanding this relationship can help home cooks decide if the extra effort is worth it and help recipe platforms recommend recipes that balance effort and nutrition.
 
-**Dataset Statistics**:
-- **Rows**: 234,429 (before cleaning)
-- **Columns**: `name`, `id`, `minutes`, `n_steps`, `nutrition`, `rating`, `n_ingredients`, etc.
+**Relevant Columns**:
+- `n_steps`: The number of steps required to make the recipe. (Proxy for complexity).
+- `minutes`: The time it takes to prepare the recipe.
+- `rating_avg`: The average rating (1-5 stars) given by users.
+- `nutrition`: A list of nutritional values (calories, fat, sugar, etc.).
+- `calories`: The number of calories per serving (extracted from `nutrition`).
+- `sugar`: The sugar content (PDV) (extracted from `nutrition`).
+- `protein`: The protein content (PDV) (extracted from `nutrition`).
 
 ## Data Cleaning and Exploratory Data Analysis
 ### Data Cleaning
-1.  Merged `recipes` and `interactions` datasets.
-2.  Filled missing ratings (0) with NaN.
-3.  Calculated average rating per recipe (`rating_avg`).
-4.  Expanded the `nutrition` column (list of values) into separate columns: `calories`, `total fat`, `sugar`, `sodium`, `protein`, `saturated fat`, `carbohydrates`.
+To prepare the data for analysis, we performed the following cleaning steps:
+
+1.  **Merging Datasets**: We left-merged the `recipes` dataset (containing recipe metadata) with the `interactions` dataset (containing user reviews) on `recipe_id`. This allows us to link recipe features (like steps) with user feedback (ratings).
+2.  **Handling Zero Ratings**: We replaced `rating` values of `0` with `NaN`. In this dataset, a rating of 0 indicates that a user did not provide a numeric rating (often just a comment), not that they gave it a "zero star" review (the scale is 1-5). Treating 0 as a valid low score would severely skew the average ratings downwards incorrectly.
+3.  **Calculating Average Ratings**: We grouped the merged data by recipe `id` and calculated the mean of the `rating` column, storing it as `rating_avg`. This gives us a single target variable per recipe.
+4.  **Parsing Nutrition Data**: The `nutrition` column contained string representations of lists (e.g., `"[51.5, 0.0, ...]" `). We parsed these strings into actual lists and expanded them into separate columns: `calories`, `total fat`, `sugar`, `sodium`, `protein`, `saturated fat`, and `carbohydrates`. This allows us to analyze specific nutritional components directly.
+
+**Cleaned Data Head**:
+Here are the first 5 rows of the cleaned dataset (selected columns):
+
+| name                                 |   n_steps |   calories |   rating_avg |
+|:-------------------------------------|----------:|-----------:|-------------:|
+| 1 brownies in the world    best ever |        10 |      138.4 |            4 |
+| 1 in canada chocolate chip cookies   |        12 |      595.1 |            5 |
+| 412 broccoli casserole               |         6 |      194.8 |            5 |
+| millionaire pound cake               |         7 |      878.3 |            5 |
+| 2000 meatloaf                        |        17 |      267   |            5 |
 
 ### Univariate Analysis
 <iframe src="assets/univariate_1.html" width="800" height="600" frameborder="0"></iframe>
