@@ -84,6 +84,7 @@ We also tested dependency on `minutes`.
 
 ## Hypothesis Testing
 **Null Hypothesis**: Recipes with high complexity (10+ steps) and low complexity (<10 steps) have the same average caloric content.
+
 **Alternative Hypothesis**: Recipes with high complexity (10+ steps) have a **higher** average caloric content than low complexity recipes. (One-sided).
 
 **Test Statistic**: Difference in means (Mean Calories of High Complexity - Mean Calories of Low Complexity).
