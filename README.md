@@ -3,7 +3,7 @@
 **Name**: Brian Liu
 
 ## Introduction
-The dataset used in this project is the **Recipes and Ratings** dataset, which nominally contains 83,782 recipes and 731,927 interactions (reviews and ratings) from Food.com. After preprocessing, there are 234,429 rows. This project focuses on understanding how recipe complexity relates to nutritional value and user ratings.
+The dataset used in this project is the **Recipes and Ratings** dataset, which nominally contains 104,592 recipes in the raw recipes dataset and 822,681 interactions in the raw interactions dataset (reviews and ratings) from Food.com. After preprocessing, there are 234,429 rows. This project focuses on understanding how recipe complexity relates to nutritional value and user ratings.
 
 **Research Question**: *What is the relationship between a recipe's complexity (steps, time, ingredients) and its nutritional value, and can these factors be used to accurately predict user satisfaction (average ratings)?*
 
