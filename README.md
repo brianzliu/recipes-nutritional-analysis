@@ -44,10 +44,6 @@ Here are the first 5 rows of the cleaned dataset:
 <iframe src="assets/univariate_1.html" width="800" height="600" frameborder="0"></iframe>
 *Description: The distribution of average ratings is left-skewed, with most recipes receiving high ratings (4-5 stars). This is typical for user-generated content where people tend to rate things they like.*
 
-<iframe src="assets/univariate_2.html" width="800" height="600" frameborder="0"></iframe>
-*Description: The distribution of the number of steps is right-skewed, with a median around 10 steps. Most recipes are relatively simple, but there are some extremely complex ones with over 50 steps.*
-
-
 ### Bivariate Analysis
 <iframe src="assets/bivariate_1.html" width="800" height="600" frameborder="0"></iframe>
 *Description: There is a positive correlation between the number of steps and calories. More complex recipes tend to have more calories, although there is significant variance.*
